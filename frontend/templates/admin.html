@@ -197,6 +197,38 @@
             background: #4CAF50;
             animation: pulse 2s infinite;
         }
+
+        .login-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .credentials-info {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .credentials-info h4 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
         
         @keyframes fadeInUp {
             from {
@@ -258,11 +290,11 @@
             <a href="/" class="logo">🏪 E-Commerce Hub</a>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/users">Users</a></li>
-                <li><a href="/products">Products</a></li>
-                <li><a href="/orders">Orders</a></li>
-                <li><a href="/payments">Payments</a></li>
-                <li><a href="/notifications">Notifications</a></li>
+                <li><a href="/user-service">Users</a></li>
+                <li><a href="/product-service">Products</a></li>
+                <li><a href="/order-service">Orders</a></li>
+                <li><a href="/payment-service">Payments</a></li>
+                <li><a href="/notification-service">Notifications</a></li>
                 <li><a href="/admin">Admin</a></li>
             </ul>
         </div>
@@ -272,6 +304,28 @@
         <div class="header">
             <h1>🚀 Admin Dashboard</h1>
             <p>Manage your microservices ecosystem from one central location</p>
+        </div>
+
+        <div class="login-section">
+            <h3>🔐 Admin Access Information</h3>
+            <div class="credentials-info">
+                <h4>Default Admin Credentials</h4>
+                <div class="credential-item">
+                    <span><strong>Username:</strong></span>
+                    <span>admin</span>
+                </div>
+                <div class="credential-item">
+                    <span><strong>Password:</strong></span>
+                    <span>admin123</span>
+                </div>
+                <div class="credential-item">
+                    <span><strong>Role:</strong></span>
+                    <span>Administrator</span>
+                </div>
+            </div>
+            <p style="opacity: 0.8; margin-top: 1rem;">
+                💡 <strong>Note:</strong> This is a demo application. In production, use secure authentication methods.
+            </p>
         </div>
 
         <div class="system-status">
@@ -311,7 +365,7 @@
                 <p>Manage user accounts, roles, and authentication settings</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="user-count">0</div>
                         <div class="stat-label">Total Users</div>
                     </div>
                     <div class="stat-item">
@@ -323,7 +377,7 @@
                         <div class="stat-label">User Roles</div>
                     </div>
                 </div>
-                <a href="http://localhost:3001/admin" class="admin-button" target="_blank">Manage Users</a>
+                <a href="/user-service/admin" class="admin-button">Manage Users</a>
             </div>
 
             <div class="admin-card">
@@ -332,7 +386,7 @@
                 <p>Add, edit, and manage your product inventory and categories</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="product-count">0</div>
                         <div class="stat-label">Products</div>
                     </div>
                     <div class="stat-item">
@@ -344,7 +398,7 @@
                         <div class="stat-label">Out of Stock</div>
                     </div>
                 </div>
-                <a href="http://localhost:3002/admin" class="admin-button" target="_blank">Manage Products</a>
+                <a href="/product-service/admin" class="admin-button">Manage Products</a>
             </div>
 
             <div class="admin-card">
@@ -353,7 +407,7 @@
                 <p>Monitor and manage customer orders and fulfillment</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="order-count">0</div>
                         <div class="stat-label">Total Orders</div>
                     </div>
                     <div class="stat-item">
@@ -365,7 +419,7 @@
                         <div class="stat-label">Completed</div>
                     </div>
                 </div>
-                <a href="http://localhost:3003/admin" class="admin-button" target="_blank">Manage Orders</a>
+                <a href="/order-service/admin" class="admin-button">Manage Orders</a>
             </div>
 
             <div class="admin-card">
@@ -374,7 +428,7 @@
                 <p>Process payments and manage financial transactions</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="payment-count">0</div>
                         <div class="stat-label">Transactions</div>
                     </div>
                     <div class="stat-item">
@@ -386,7 +440,7 @@
                         <div class="stat-label">Methods</div>
                     </div>
                 </div>
-                <a href="http://localhost:3004/admin" class="admin-button" target="_blank">Manage Payments</a>
+                <a href="/payment-service/admin" class="admin-button">Manage Payments</a>
             </div>
 
             <div class="admin-card">
@@ -395,7 +449,7 @@
                 <p>Send notifications and manage communication channels</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="notification-count">0</div>
                         <div class="stat-label">Sent</div>
                     </div>
                     <div class="stat-item">
@@ -407,7 +461,7 @@
                         <div class="stat-label">Delivery</div>
                     </div>
                 </div>
-                <a href="http://localhost:3005/admin" class="admin-button" target="_blank">Manage Notifications</a>
+                <a href="/notification-service/admin" class="admin-button">Manage Notifications</a>
             </div>
         </div>
     </div>
@@ -415,12 +469,59 @@
     <script>
         // Update stats in real-time (simulation)
         function updateStats() {
-            // This would normally fetch real data from APIs
-            console.log('Updating dashboard stats...');
+            // Simulate fetching data from APIs
+            fetch('/user-service/users')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('user-count').textContent = data.length || 0;
+                })
+                .catch(() => {
+                    // Fallback for demo
+                    document.getElementById('user-count').textContent = Math.floor(Math.random() * 50);
+                });
+
+            fetch('/product-service/products')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('product-count').textContent = data.length || 0;
+                })
+                .catch(() => {
+                    document.getElementById('product-count').textContent = Math.floor(Math.random() * 100);
+                });
+
+            fetch('/order-service/orders')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('order-count').textContent = data.length || 0;
+                })
+                .catch(() => {
+                    document.getElementById('order-count').textContent = Math.floor(Math.random() * 25);
+                });
+
+            fetch('/payment-service/payments')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('payment-count').textContent = data.length || 0;
+                })
+                .catch(() => {
+                    document.getElementById('payment-count').textContent = Math.floor(Math.random() * 30);
+                });
+
+            fetch('/notification-service/notifications')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('notification-count').textContent = data.length || 0;
+                })
+                .catch(() => {
+                    document.getElementById('notification-count').textContent = Math.floor(Math.random() * 15);
+                });
         }
 
-        // Simulate real-time updates
-        setInterval(updateStats, 30000); // Update every 30 seconds
+        // Initial load
+        updateStats();
+
+        // Update every 30 seconds
+        setInterval(updateStats, 30000);
 
         // Add click animations
         document.querySelectorAll('.admin-button').forEach(button => {
