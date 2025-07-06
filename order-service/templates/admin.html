@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+        }
+        .btn {
+            background: #fd7e14;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #e8630a;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .orders-table th, .orders-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .orders-table th {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .total {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Order Admin Dashboard</h1>
+        
+        <div class="form-container">
+            <h3>Create New Order</h3>
+            <form id="orderForm">
+                <div class="form-group">
+                    <label for="user_id">User ID:</label>
+                    <input type="text" id="user_id" name="user_id" required>
+                </div>
+                <div class="form-group">
+                    <label for="product_name">Product Name:</label>
+                    <input type="text" id="product_name" name="product_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price per Item ($):</label>
+                    <input type="number" id="price" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="shipping_address">Shipping Address:</label>
+                    <textarea id="shipping_address" name="shipping_address" required></textarea>
+                </div>
+                <button type="submit" class="btn">Create Order</button>
+            </form>
+        </div>
+
+        <h3>Order Management</h3>
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User ID</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.user_id }}</td>
+                    <td>{{ order.items|length }} items</td>
+                    <td class="total">${{ "%.2f"|format(order.total_amount) }}</td>
+                    <td><span class="status {{ order.status }}">{{ order.status.upper() }}</span></td>
+                    <td>{{ order.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/admin/orders', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Order created successfully!');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating order');
+            });
+        });
+    </script>
+</body>
+</html>

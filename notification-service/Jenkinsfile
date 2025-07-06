@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker image tag')
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Deployment environment')
+    }
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        AWS_CREDENTIALS = credentials('aws-creds')
+        IMAGE_NAME = 'kastrov/notification-service'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
+                        def image = docker.build("${IMAGE_NAME}:${params.IMAGE_TAG}", "./notification-service")
+                        image.push()
+                        image.push("latest")
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                        sh """
+                            aws eks update-kubeconfig --region us-east-1 --name kastro-eks
+                            sed -i 's|IMAGE_TAG|${params.IMAGE_TAG}|g\' notification-service/k8s/deployment.yml
+                            kubectl apply -f notification-service/k8s/
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                        sh """
+                            kubectl rollout status deployment/notification-service
+                            kubectl get pods -l app=notification-service
+                        """
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Notification Service deployed successfully!'
+        }
+        failure {
+            echo 'Notification Service deployment failed!'
+        }
+    }
+}
